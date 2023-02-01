@@ -3,6 +3,7 @@ import 'package:drift/drift.dart';
 
 export 'entities.dart';
 export 'keys.dart';
+export 'stream_cipher.dart';
 
 final sha256 = Sha256();
 
