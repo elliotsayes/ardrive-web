@@ -65,7 +65,7 @@ void main() {
     test('should encrypt a lot of data', () async {
       final encryptionTransformer = aes256GcmEncryptionTransformer(_testKey, _testIV);
 
-      dataGenerator() => generateKilobytesOfData(2 * 1024, finalSizeBytes: 255);
+      dataGenerator() => generateKilobytesOfData(5 * 1024, finalSizeBytes: 255);
       final dataStream = dataGenerator();
       final dataBuffer = await collectBytes(dataGenerator());
 
@@ -87,7 +87,7 @@ void main() {
       print('Buffer time: $bufferTime');
       
       final relativeTime = streamTime.inMilliseconds / bufferTime.inMilliseconds;
-      expect(relativeTime, lessThan(1.5));
+      expect(relativeTime, lessThan(1.5), reason: 'Stream time should be less than 1.5x buffer time');
     }, timeout: const Timeout(Duration(minutes: 1)));
   });
 }
