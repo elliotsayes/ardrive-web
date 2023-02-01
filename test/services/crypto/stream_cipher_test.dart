@@ -64,15 +64,30 @@ void main() {
 
     test('should encrypt a lot of data', () async {
       final encryptionTransformer = aes256GcmEncryptionTransformer(_testKey, _testIV);
-      
-      final dataStream = generateKilobytesOfData(200, finalSizeBytes: 255);
+
+      dataGenerator() => generateKilobytesOfData(2 * 1024, finalSizeBytes: 255);
+      final dataStream = dataGenerator();
+      final dataBuffer = await collectBytes(dataGenerator());
+
       final encryptionStream = dataStream.transform(encryptionTransformer);
       
+      DateTime start, end;
+      start = DateTime.now();
       await for (final _ in encryptionStream) {
         print(_.length);
       }
+      end = DateTime.now();
+      final streamTime = end.difference(start);
+      print('Stream time: $streamTime');
+
+      start = DateTime.now();
+      await bufferEncrypt(dataBuffer, _testKey, _testIV);
+      end = DateTime.now();
+      final bufferTime = end.difference(start);
+      print('Buffer time: $bufferTime');
       
-      expect(true, isTrue);
+      final relativeTime = streamTime.inMilliseconds / bufferTime.inMilliseconds;
+      expect(relativeTime, lessThan(1.5));
     }, timeout: const Timeout(Duration(minutes: 1)));
   });
 }
