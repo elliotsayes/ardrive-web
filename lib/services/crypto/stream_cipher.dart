@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:async/async.dart';
@@ -13,30 +12,29 @@ Stream<Uint8List> _encryptBlockStream(GCMBlockCipher encrypter, Stream<Uint8List
 
   while (true) {
     final sourceBuffer = await chunker.readBytes(_bufferSizeBytes);
+    final sourceBufferLength = sourceBuffer.length;
+    if (sourceBufferLength == 0) break;
+
+    final sinkBuffer = Uint8List(sourceBufferLength + _bufferSizeBytes);
+    final processedBytes = encrypter.processBytes(sourceBuffer, 0, sourceBufferLength, sinkBuffer, 0);
     
-    final bufferLength = sourceBuffer.length;
-    if (bufferLength == 0) break;
-    final sinkBuffer = Uint8List(bufferLength);
+    // var bufferOffset = 0;
+    // while (true) {
+    //   final bufferRemaining = bufferLength - bufferOffset;
+    //   final blockLength = min(_aesBlockSizeBytes, bufferRemaining);
+    //   if (blockLength == 0) break;
 
-    var bufferOffset = 0;
-    while (true) {
-      final bufferRemaining = bufferLength - bufferOffset;
-      final blockLength = min(_aesBlockSizeBytes, bufferRemaining);
-      if (blockLength == 0) break;
+    //   encrypter.processBlock(sourceBuffer, bufferOffset, sinkBuffer, bufferOffset);
+    //   bufferOffset += blockLength;
+    // }
 
-      encrypter.processBlock(sourceBuffer, bufferOffset, sinkBuffer, bufferOffset);
-      bufferOffset += blockLength;
-    }
-
-    yield sinkBuffer;
+    yield Uint8List.sublistView(sinkBuffer, 0, processedBytes);
   }
 
-  final macBuffer = Uint8List(encrypter.macSize);
-  final macBytesCount = encrypter.doFinal(macBuffer, 0);
+  final finalBuffer = Uint8List(encrypter.macSize * 2);
+  final finalBytesCount = encrypter.doFinal(finalBuffer, 0);
   
-  if (macBytesCount != macBuffer.length) throw StateError('MAC size mismatch: $macBytesCount != ${macBuffer.length}');
-  
-  yield macBuffer;
+  yield Uint8List.sublistView(finalBuffer, 0, finalBytesCount);
 }
 
 /// Encrypts the given data stream with AES-256GCM using the given key and initialization vector (IV).
