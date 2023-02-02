@@ -14,7 +14,7 @@ void main() {
     test('should match sync method when a multiple of block size', () async {
       final encryptionTransformer = aes256GcmEncryptionTransformer(_testKey, _testIV);
       
-      dataGenerator() => generateKilobytesOfData(1, finalSizeBytes: _blockSize * 3);
+      dataGenerator() => generateMegabytesOfData(1, finalSizeBytes: _blockSize * 3);
       final dataStream = dataGenerator();
       final dataBuffer = await collectBytes(dataGenerator());
       expect(dataBuffer.length % _blockSize, equals(0));
@@ -31,7 +31,7 @@ void main() {
     test('should match sync method when not a multiple of block size', () async {
       final encryptionTransformer = aes256GcmEncryptionTransformer(_testKey, _testIV);
       
-      dataGenerator() => generateKilobytesOfData(1, finalSizeBytes: _blockSize + 3);
+      dataGenerator() => generateMegabytesOfData(1, finalSizeBytes: _blockSize + 3);
       final dataStream = dataGenerator();
       final dataBuffer = await collectBytes(dataGenerator());
       expect(dataBuffer.length % _blockSize, isNot(equals(0)));
@@ -48,7 +48,7 @@ void main() {
     test('should match sync method when zero length', () async {
       final encryptionTransformer = aes256GcmEncryptionTransformer(_testKey, _testIV);  
       
-      dataGenerator() => generateKilobytesOfData(0);
+      dataGenerator() => generateMegabytesOfData(0);
       final dataStream = dataGenerator();
       final dataBuffer = await collectBytes(dataGenerator());
       expect(dataBuffer.length, equals(0));
@@ -65,7 +65,7 @@ void main() {
     test('should encrypt a lot of data', () async {
       final encryptionTransformer = aes256GcmEncryptionTransformer(_testKey, _testIV);
 
-      dataGenerator() => generateKilobytesOfData(5 * 1024, finalSizeBytes: 255);
+      dataGenerator() => generateMegabytesOfData(10, finalSizeBytes: 255);
       final dataStream = dataGenerator();
       final dataBuffer = await collectBytes(dataGenerator());
 

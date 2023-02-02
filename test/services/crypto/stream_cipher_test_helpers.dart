@@ -14,9 +14,9 @@ Future<Uint8List> bufferEncrypt(List<int> data, Uint8List key, Uint8List iv) asy
   return encryptedSyncData;
 }
 
-Stream<Uint8List> generateKilobytesOfData(int megabytes, {int? finalSizeBytes}) async* {
+Stream<Uint8List> generateMegabytesOfData(int megabytes, {int? finalSizeBytes}) async* {
   for (var i = 0; i < megabytes; i++) {
-    yield Uint8List(1024);
+    yield Uint8List(1024 * 1024);
   }
   if (finalSizeBytes != null) {
     yield Uint8List.fromList(List.generate(finalSizeBytes, (index) => index % 256));
