@@ -23,7 +23,7 @@ Stream<Uint8List> _processStreamCipher(StreamCipher streamCipher, Stream<Uint8Li
     if (sourceBufferLength == 0) break;
 
     final sinkBuffer = Uint8List(sourceBufferLength);
-    final processedBytes = streamCipher.processBytes(sourceBuffer, 0, sourceBufferLength, sinkBuffer, 0);
+    streamCipher.processBytes(sourceBuffer, 0, sourceBufferLength, sinkBuffer, 0);
 
     yield sinkBuffer;
   }
@@ -47,5 +47,14 @@ StreamTransformer<Uint8List, Uint8List> chacha20EncryptionTransformer(Uint8List 
 /// Decrypts the given data stream with ChaCha20 using the given key and initialization vector (IV).
 /// Returns a stream of the decrypted data.
 StreamTransformer<Uint8List, Uint8List> chacha20DecryptionTransformer(Uint8List key, Uint8List iv) {
-  throw UnimplementedError();
+  final parameters = ParametersWithIV(
+    KeyParameter(key),
+    iv,
+  );
+  final decryptor = StreamCipher('ChaCha20/20')
+    ..init(false, parameters);
+  
+  return StreamTransformer.fromBind(
+    (Stream<Uint8List> dataStream) => _processStreamCipher(decryptor, dataStream),
+  );
 }
