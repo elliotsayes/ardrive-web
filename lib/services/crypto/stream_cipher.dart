@@ -1,8 +1,16 @@
 import 'dart:async';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:async/async.dart';
 import 'package:pointycastle/export.dart';
+
+const _chacha20NonceLengthBytes = 8;
+
+FutureOr<Uint8List> chacha20Nonce() {
+  final rng = Random.secure();
+  return Uint8List.fromList(List.generate(_chacha20NonceLengthBytes, (_) => rng.nextInt(256)));
+}
 
 const _bufferSizeBytes = 256 * 1024;
 

@@ -11,7 +11,7 @@ final _testKey = Uint8List.fromList(List.generate(32, (index) => index % 256));
 final _testIV = Uint8List.fromList(List.generate(8, (index) => index % 256));
 
 void main() {
-  group('encryptAes256GcmStream function', () {    
+  group('chacha20EncryptionTransformer function', () {    
     test('should match sync method when a multiple of block size', () async {
       final encryptionTransformer = chacha20EncryptionTransformer(_testKey, _testIV);
       

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:ardrive/entities/entities.dart';
+import 'package:ardrive/services/crypto/stream_cipher.dart';
 import 'package:ardrive/services/services.dart';
 import 'package:arweave/arweave.dart';
 import 'package:arweave/utils.dart' as utils;
@@ -75,6 +76,28 @@ Future<Transaction> createEncryptedTransaction(
     ..addTag(
       EntityTag.cipherIv,
       utils.encodeBytesToBase64(encryptionRes.nonce),
+    );
+}
+
+/// Creates a [Transaction] with the provided data encrypted along with the appropriate cipher tags.
+Future<TransactionStream> createEncryptedTransactionStream(
+  DataStreamGenerator cleartextDataStreamGenerator,
+  int dataSize,
+  SecretKey key,
+) async {
+  final cipherKey = await key.extractBytes() as Uint8List;
+  final cipherIv = await chacha20Nonce();
+  ciphertextDataStreamGenerator() => cleartextDataStreamGenerator()
+      .transform(chacha20EncryptionTransformer(cipherKey, cipherIv));
+
+  return TransactionStream.withBlobData(
+      dataStreamGenerator: ciphertextDataStreamGenerator,
+      dataSize: dataSize)
+    ..addTag(EntityTag.contentType, ContentType.octetStream)
+    ..addTag(EntityTag.cipher, Cipher.chacha20)
+    ..addTag(
+      EntityTag.cipherIv,
+      utils.encodeBytesToBase64(cipherIv),
     );
 }
 

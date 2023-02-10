@@ -41,6 +41,7 @@ class EntityType {
 
 class Cipher {
   static const aes256 = 'AES256-GCM';
+  static const chacha20 = 'ChaCha20';
 }
 
 class DrivePrivacy {
