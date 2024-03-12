@@ -25,8 +25,6 @@ void main() {
     appName: 'ardrive',
   );
 
-  const stubFileId = '00000000-0000-0000-0000-000000000000';
-  const stubDriveId = 'FFFFFFFF-0000-0000-0000-000000000000';
   const stubLicenseDefinitionTxId =
       'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF';
   const stubLicenseAssertionTxId =
@@ -73,15 +71,10 @@ void main() {
     group('toLicenseAssertionsCompanion method', () {
       test('returns a companion with expected fields', () async {
         final companion = stubLicenseAssertion.toCompanion(
-          driveId: stubDriveId,
-          fileId: stubFileId,
           licenseType: LicenseType.udl,
         );
 
-        expect(companion.fileId, equals(const Value(stubFileId)));
-        expect(companion.driveId, equals(const Value(stubDriveId)));
         expect(companion.licenseType, equals(Value(LicenseType.udl.name)));
-        expect(companion.dataTxId, equals(const Value(stubDataTxId)));
         expect(companion.licenseTxType,
             equals(Value(LicenseTxType.assertion.name)));
         expect(companion.licenseTxId,
