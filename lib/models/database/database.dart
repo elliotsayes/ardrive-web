@@ -113,8 +113,7 @@ class Database extends _$Database {
                 // Recreate licenses
                 logger.d('Migrating schema from v19 to v20');
 
-                await m.deleteTable('licenses');
-                await m.createTable(licenses);
+                await m.alterTable(TableMigration(licenses));
               }
             }
           } catch (e, stacktrace) {

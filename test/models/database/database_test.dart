@@ -24,18 +24,23 @@ void main() {
   }
 
   group('Database Migration Tests', () {
-    test('should successfully upgrade database schema from v17 to v19',
+    test('should successfully upgrade database schema from v17 to v20',
         () async {
-      // Executes migration from version 17 to 19 and validates the schema
-      final db = await migrateDatabase(verifier, 17, 19);
+      final db = await migrateDatabase(verifier, 17, 20);
 
       db.close();
     });
 
-    test('should successfully upgrade database schema from v18 to v19',
+    test('should successfully upgrade database schema from v18 to v20',
         () async {
-      // Executes migration from version 18 to 19 and validates the schema
-      final db = await migrateDatabase(verifier, 18, 19);
+      final db = await migrateDatabase(verifier, 18, 20);
+
+      db.close();
+    });
+
+    test('should successfully upgrade database schema from v19 to v20',
+        () async {
+      final db = await migrateDatabase(verifier, 19, 20);
 
       db.close();
     });
